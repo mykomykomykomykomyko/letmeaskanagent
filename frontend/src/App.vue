@@ -126,14 +126,25 @@ input {
 }
   
 button {
+  display: block;
+  margin: 1rem auto;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+  background-color: #111;
+  border: none;
+  border-radius: 8px;
   width: 100%;
   max-width: 600px;
-  margin: 0 auto;
-  display: block;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 button:hover {
   background-color: #333;
+  transform: scale(1.01);
 }
 
 .result {
