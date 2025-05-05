@@ -112,15 +112,11 @@ p {
   margin-bottom: 1.5rem;
 }
 
-input {
-  width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background-color: #fff;
-  color: #111;
+input, button {
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 button {
