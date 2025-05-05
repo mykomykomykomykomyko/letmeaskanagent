@@ -1,32 +1,38 @@
 <template>
   <div class="full-wrapper">
-  
     <div class="box full-width" id="main-box">
       <h1>Let me ask an agent for you.</h1>
-<p>Skip the ping-pong. This tool sends your question directly to an AI agent — no detours, no delay.</p>
-      <input v-model="prompt" placeholder="what do you want to know?" @keyup.enter="generateLink" autofocus />
+      <p>Skip the ping-pong. This tool sends your question directly to an AI agent — no detours, no delay.</p>
+      <input
+        v-model="prompt"
+        :class="{ 'error-input': showError }"
+        placeholder="what do you want to know?"
+        @keyup.enter="generateLink"
+        autofocus
+      />
       <button @click="generateLink">Submit your question</button>
 
       <div v-if="link" class="result success">
-  <h2>✨ Congratulations! Here's your answer.</h2>
-  <a :href="link" target="_blank">{{ link }}</a>
-  <p>This link will open your GoA's secure ChatGPT where your questions will be answered.</p>
-  <button class="copy-btn" @click="copyToClipboard">📋 Copy to clipboard and share with your colleague</button>
-</div>
-    <span v-if="copied" class="toast">✅ Copied!</span>
-</div>
+        <h2>✨ Congratulations! Here's your answer.</h2>
+        <a :href="link" target="_blank">{{ link }}</a>
+        <p>This link will open your GoA's secure ChatGPT where your questions will be answered.</p>
+        <button class="copy-btn" @click="copyToClipboard">📋 Copy to clipboard and share with your colleague</button>
+      </div>
+      <span v-if="copied" class="toast">✅ Copied!</span>
+    </div>
     <footer class="footer-credit">built by <a href="https://www.linkedin.com/in/mykodev/" target="_blank" rel="noopener noreferrer">Mykola</a> at 12:15AM</footer>
   </div>
 </template>
 
 <script setup>
 import confetti from 'canvas-confetti'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
 const prompt = ref('')
 const link = ref('')
 const submitCount = ref(0)
 const copied = ref(false)
+const showError = ref(false)
 
 const copyToClipboard = () => {
   navigator.clipboard.writeText(link.value)
@@ -35,11 +41,19 @@ const copyToClipboard = () => {
 }
 
 const generateLink = async () => {
+  const trimmed = prompt.value.trim()
+  if (!trimmed) {
+    showError.value = true
+    setTimeout(() => showError.value = false, 1500)
+    return
+  }
+
   submitCount.value++
   if (submitCount.value === 5) {
     alert("🎉 You sure need this tool, don't you?")
   }
-  const encoded = encodeURIComponent(prompt.value.trim())
+
+  const encoded = encodeURIComponent(trimmed)
   link.value = `https://chat.openai.com/?model=gpt-4&prompt=${encoded}`
   scrollToResult()
   prompt.value = ''
@@ -50,6 +64,7 @@ const generateLink = async () => {
     ticks: 300
   })
 }
+
 const scrollToResult = () => {
   setTimeout(() => {
     document.querySelector('.result')?.scrollIntoView({ behavior: 'smooth' })
@@ -124,7 +139,21 @@ input {
   color: #111;
   box-sizing: border-box;
 }
-  
+
+.error-input {
+  border-color: red !important;
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
 button {
   display: block;
   margin: 1rem auto;
@@ -161,134 +190,7 @@ a {
 a:hover {
   opacity: 0.7;
 }
-.footer-box {
-  width: 100%;
-  max-width: 720px;
-  margin: 2rem auto 0;
-  text-align: left;
-  background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
 
-.footer-box h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.footer-box p {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #333;
-}
-
-.footer-box details {
-  margin-top: 1rem;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-}
-
-.footer-box summary {
-  font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-  outline: none;
-}
-
-.footer-box details p {
-  margin: 0.5rem 0 0;
-  font-size: 0.95rem;
-  color: #444;
-}
-
-.scroll-section {
-  margin-bottom: 2rem;
-}
-.scroll-button {
-  margin-top: 1rem;
-  background-color: transparent;
-  color: #111;
-  border: 2px solid #111;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.2s;
-  width: 100%;
-}
-
-.scroll-button:hover {
-  background-color: #111;
-  color: #fff;
-}
-.footer-box ul {
-  margin-top: 1rem;
-  padding-left: 1rem;
-  list-style: disc;
-}
-
-.footer-box ul li {
-  margin-bottom: 0.75rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: #333;
-}
-.content-container { display: none; }
-
-.copy-btn {
-  margin-left: 0.75rem;
-  background-color: #111;
-  color: #fff;
-  border: none;
-  padding: 0.4rem 0.75rem;
-  font-size: 0.9rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.copy-btn:hover {
-  background-color: #333;
-}
-.result.success {
-  background: #f8f8f8;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.result.success h2 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-}
-
-.result.success a {
-  display: block;
-  font-size: 0.95rem;
-  margin-bottom: 0.75rem;
-}
-.toast {
-  display: inline-block;
-  margin-top: 1rem;
-  color: green;
-  font-size: 0.95rem;
-  font-weight: 500;
-  animation: fadeInOut 2s ease;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; }
-}
 .footer-credit {
   position: absolute;
   bottom: 1rem;
@@ -308,4 +210,55 @@ a:hover {
   opacity: 0.7;
 }
 
+.copy-btn {
+  margin-left: 0.75rem;
+  background-color: #111;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.copy-btn:hover {
+  background-color: #333;
+}
+
+.result.success {
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.result.success h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.result.success a {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.toast {
+  display: inline-block;
+  margin-top: 1rem;
+  color: green;
+  font-size: 0.95rem;
+  font-weight: 500;
+  animation: fadeInOut 2s ease;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
 </style>
