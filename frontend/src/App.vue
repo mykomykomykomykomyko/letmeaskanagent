@@ -112,23 +112,24 @@ p {
   margin-bottom: 1.5rem;
 }
 
-input, button {
-  max-width: 560px;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-}
-
-button {
-  background-color: #111;
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
+input {
   width: 100%;
+  max-width: 600px;
+  padding: 1rem;
+  font-size: 1rem;
+  margin-bottom: 1.25rem;
+  border: 2px solid #111;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #111;
+  box-sizing: border-box;
+}
+  
+button {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  display: block;
 }
 
 button:hover {
